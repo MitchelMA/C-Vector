@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 #include "vector.h"
@@ -17,7 +18,7 @@ struct _vector_impl
 Vector *vector_create(size_t elem_size)
 {
     struct _vector_impl *tmp = malloc(sizeof(struct _vector_impl));
-    tmp->values = calloc(VECTOR_START_CAPACITY, elem_size);
+    tmp->values = malloc(VECTOR_START_CAPACITY * elem_size);
     tmp->capacity = VECTOR_START_CAPACITY;
     tmp->count = 0;
     tmp->elem_size = elem_size;
@@ -38,12 +39,26 @@ void vector_append(Vector *vec, void *value)
 {
     struct _vector_impl *impl = (struct _vector_impl *)vec;
     assert(impl->count <= impl->capacity);
-    if (++impl->count >= impl->capacity)
+    if (++impl->count > impl->capacity)
     {
-        impl->capacity += VECTOR_CAPACITY_INCREASE;
-        impl->values = realloc(impl->values, impl->capacity * impl->elem_size);
+        printf("Increase capacity of vector\n");
+        increase_capacity(impl);
+        printf("Capacity increased\n");
+        assert(impl->values != NULL);
     }
     impl->values[impl->count - 1] = value;
+}
+
+void increase_capacity(struct _vector_impl *impl)
+{
+    impl->capacity += VECTOR_CAPACITY_INCREASE;
+    void **tmp = malloc(impl->capacity * impl->elem_size);
+    for (int i = 0; i < impl->count; i++)
+    {
+        tmp[i] = impl->values[i];
+    }
+    // free(impl->values);
+    impl->values = tmp;
 }
 
 void *vector_at(const Vector *vec, size_t idx)
