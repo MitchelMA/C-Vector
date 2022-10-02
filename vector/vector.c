@@ -44,6 +44,11 @@ size_t vector_getsize(const Vector *vec)
     return vec->count;
 }
 
+int vector_isflushed(const Vector *vec)
+{
+    return vec->flushed;
+}
+
 int vector_append(Vector *vec, void *value)
 {
     assert(!vec->flushed);

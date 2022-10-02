@@ -14,6 +14,7 @@ Vector *vector_create();
 
 size_t vector_getcapacity(const Vector *vec);
 size_t vector_getsize(const Vector *vec);
+int vector_isflushed(const Vector *vec);
 
 /**
  * @brief Append the value at the end of the vector
