@@ -38,7 +38,7 @@ size_t vector_getcapacity(const Vector *vec)
     return vec->capacity;
 }
 
-size_t vector_getsize(const Vector *vec)
+size_t vector_getcount(const Vector *vec)
 {
     assert(!vec->flushed);
     return vec->count;

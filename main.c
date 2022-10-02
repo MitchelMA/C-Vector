@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     *(int *)vector_at(numvec, 2) = 20;
 
     // show data
-    printf("size: %d\n", vector_getsize(numvec));
+    printf("count: %d\n", vector_getcount(numvec));
     printf("capacity: %d\n", vector_getcapacity(numvec));
     printf("items:\n");
     vector_print(numvec);
@@ -29,13 +29,13 @@ int main(int argc, char *argv[])
     int *out;
     if (vector_remove(numvec, &out))
     {
-        printf("removed value: %d\n", *out);
+        printf("\nremoved value: %d\n", *out);
         free(out);
         vector_print(numvec);
     }
 
     // flush the vector after removing all the values
-    for (int i = 0; i < vector_getsize(numvec); i++)
+    for (int i = 0; i < vector_getcount(numvec); i++)
     {
         int *outval;
         if (vector_remove(numvec, &outval))
@@ -69,7 +69,7 @@ void fillVec(Vector *vec, int amount)
 
 void vector_print(Vector *vec)
 {
-    for (int i = 0; i < vector_getsize(vec); i++)
+    for (int i = 0; i < vector_getcount(vec); i++)
     {
         int *val = vector_at(vec, i);
         printf("element %d: %p : %d\n", i, val, *val);

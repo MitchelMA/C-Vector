@@ -13,7 +13,7 @@ typedef struct _vector_impl Vector;
 Vector *vector_create();
 
 size_t vector_getcapacity(const Vector *vec);
-size_t vector_getsize(const Vector *vec);
+size_t vector_getcount(const Vector *vec);
 int vector_isflushed(const Vector *vec);
 
 /**
