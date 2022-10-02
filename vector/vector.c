@@ -1,69 +1,106 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 #include "vector.h"
 
-#define VECTOR_START_CAPACITY 8
-#define VECTOR_CAPACITY_INCREASE 8
-#define VECTOR_EMPTY_VALUE NULL
+#define VECTOR_START_CAPACITY 16
+#define VECTOR_CAPACITY_INCREASE 16
+#define VECTOR_EMPTY_VALUE 0xdead
 
-struct _vector_impl
+typedef struct _vector_impl
 {
     void **values;
     size_t capacity;
     size_t count;
-    size_t elem_size;
-};
+    int flushed;
+} Vector;
 
-Vector *vector_create(size_t elem_size)
+// local prototypes ------
+
+void increase_capacity(Vector *vec);
+
+// end local prototypes --
+
+Vector *vector_create()
 {
-    struct _vector_impl *tmp = malloc(sizeof(struct _vector_impl));
-    tmp->values = malloc(VECTOR_START_CAPACITY * elem_size);
+    Vector *tmp = malloc(sizeof(Vector));
+    tmp->values = malloc(VECTOR_START_CAPACITY * sizeof(uintptr_t));
     tmp->capacity = VECTOR_START_CAPACITY;
     tmp->count = 0;
-    tmp->elem_size = elem_size;
+    tmp->flushed = 0;
     return tmp;
 }
 
-size_t vector_getcapacity(Vector *vec)
+size_t vector_getcapacity(const Vector *vec)
 {
-    return ((struct _vector_impl *)vec)->capacity;
+    assert(!vec->flushed);
+    return vec->capacity;
 }
 
-size_t vector_getsize(Vector *vec)
+size_t vector_getsize(const Vector *vec)
 {
-    return ((struct _vector_impl *)vec)->count;
+    assert(!vec->flushed);
+    return vec->count;
 }
 
-void vector_append(Vector *vec, void *value)
+int vector_append(Vector *vec, void *value)
 {
-    struct _vector_impl *impl = (struct _vector_impl *)vec;
-    assert(impl->count <= impl->capacity);
-    if (++impl->count > impl->capacity)
+    assert(!vec->flushed);
+    if (vec == NULL || value == NULL)
+        return 0;
+
+    if (++vec->count > vec->capacity)
     {
-        printf("Increase capacity of vector\n");
-        increase_capacity(impl);
-        printf("Capacity increased\n");
-        assert(impl->values != NULL);
+        increase_capacity(vec);
+        assert(vec->values != NULL);
     }
-    impl->values[impl->count - 1] = value;
+
+    assert(vec->count < vec->capacity + 1);
+    vec->values[vec->count - 1] = value;
+
+    return 1;
 }
 
-void increase_capacity(struct _vector_impl *impl)
+int vector_remove(Vector *vec, void **out)
 {
-    impl->capacity += VECTOR_CAPACITY_INCREASE;
-    void **tmp = malloc(impl->capacity * impl->elem_size);
-    for (int i = 0; i < impl->count; i++)
+    assert(!vec->flushed);
+    if (vec == NULL)
+        return 0;
+
+    if (out != NULL)
     {
-        tmp[i] = impl->values[i];
+        *out = vec->values[vec->count - 1];
+        vec->values[vec->count - 1] = VECTOR_EMPTY_VALUE;
+        vec->count--;
     }
-    // free(impl->values);
-    impl->values = tmp;
+
+    return 1;
 }
 
 void *vector_at(const Vector *vec, size_t idx)
 {
-    struct _vector_impl *impl = (struct _vector_impl *)vec;
-    assert(idx < impl->count);
-    return impl->values[idx];
+    assert(!vec->flushed);
+    assert(idx < vec->count);
+    return vec->values[idx];
 }
+
+void vector_flush(Vector *vec)
+{
+    assert(!vec->flushed);
+    vec->flushed = 1;
+    // reset all the values
+    vec->capacity = 0;
+    vec->count = 0;
+    free(vec->values);
+}
+
+// local prototype implementations ------
+
+void increase_capacity(Vector *vec)
+{
+    vec->capacity += VECTOR_CAPACITY_INCREASE;
+    vec->values = realloc(vec->values, vec->capacity * sizeof(uintptr_t));
+}
+
+// end local prototype implementations --

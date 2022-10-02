@@ -4,24 +4,56 @@
 #include "vector/vector.h"
 
 void fillVec(Vector *vec, int amount);
+void vector_print(Vector *vec);
 
 int main(int argc, char *argv[])
 {
     argv++;
     int num = atoi(*argv);
-    Vector *myvec = vector_create(sizeof(int));
-    fillVec(myvec, num);
-    int *terug = vector_at(myvec, 0);
+    num = num > 2 ? num : 4;
 
-    printf("size: %d\n", vector_getsize(myvec));
-    printf("capacity: %d\n", vector_getcapacity(myvec));
-    printf("address of first: %p: %d\n", terug, *terug);
-    printf("values: \n");
-    for (int i = 0; i < vector_getsize(myvec); i++)
+    // initialize a vector
+    Vector *numvec = vector_create();
+    // fill it with numbers
+    fillVec(numvec, num);
+    // change a value
+    *(int *)vector_at(numvec, 2) = 20;
+
+    // show data
+    printf("size: %d\n", vector_getsize(numvec));
+    printf("capacity: %d\n", vector_getcapacity(numvec));
+    printf("items:\n");
+    vector_print(numvec);
+
+    // remove a value
+    int *out;
+    if (vector_remove(numvec, &out))
     {
-        void *val = vector_at(myvec, i);
-        printf("\t%p: %d\n", val, *(int *)val);
+        printf("removed value: %d\n", *out);
+        free(out);
+        vector_print(numvec);
     }
+
+    // flush the vector after removing all the values
+    for (int i = 0; i < vector_getsize(numvec); i++)
+    {
+        int *outval;
+        if (vector_remove(numvec, &outval))
+        {
+            free(outval);
+        }
+        else
+        {
+            printf("Failed to remove a value from the vector\n");
+        }
+    }
+
+    // flushing the vector resets and frees all the heap allocated stuff
+    vector_flush(numvec);
+    // now we can free the vector without creating a memory leak
+    free(numvec);
+
+    printf("freeing the vector went successful\n");
 
     return EXIT_SUCCESS;
 }
@@ -33,5 +65,14 @@ void fillVec(Vector *vec, int amount)
         int *num = malloc(sizeof(int));
         *num = i + 1;
         vector_append(vec, num);
+    }
+}
+
+void vector_print(Vector *vec)
+{
+    for (int i = 0; i < vector_getsize(vec); i++)
+    {
+        int *val = vector_at(vec, i);
+        printf("element %d: %p : %d\n", i, val, *val);
     }
 }
