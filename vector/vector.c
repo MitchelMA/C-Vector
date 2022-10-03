@@ -99,14 +99,33 @@ void *vector_at(const Vector *vec, size_t idx)
     return vec->values[idx];
 }
 
-void vector_flush(Vector *vec)
+int vector_flush(Vector *vec)
 {
+    if (vec == NULL)
+        return 0;
+
     assert(!vec->flushed);
+
     vec->flushed = 1;
     // reset all the values
     vec->capacity = 0;
     vec->count = 0;
     free(vec->values);
+    return 1;
+}
+
+int vector_reset(Vector *vec)
+{
+    if (vec == NULL)
+        return 0;
+
+    assert(vec->flushed);
+
+    vec->flushed = 0;
+    vec->capacity = VECTOR_START_CAPACITY;
+    vec->count = 0;
+    vec->values = malloc(VECTOR_START_CAPACITY * sizeof(uintptr_t));
+    return 1;
 }
 
 // local prototype implementations ------

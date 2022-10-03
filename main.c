@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
     // flushing the vector resets and frees all the heap allocated stuff
     vector_flush(numvec);
     printf("flushing the vector was successful: %s\n", vector_isflushed(numvec) == 1 ? "true" : "false");
+
     // now we can free the vector without creating a memory leak
     free(numvec);
 

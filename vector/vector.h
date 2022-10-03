@@ -50,6 +50,15 @@ void *vector_at(const Vector *vec, size_t idx);
  * @param vec
  * @return int
  */
-void vector_flush(Vector *vec);
+int vector_flush(Vector *vec);
+
+/**
+ * @brief Resets all the attributes of the vector, making it ready **after** it was flushed.
+ * It checks if the vector was flushed or not, because of this an assertion will fail if it was not flushed.
+ *
+ * @param vec The vector that gets reset.
+ * @return Succes of resetting
+ */
+int vector_reset(Vector *vec);
 
 #endif // __VECTOR_H__
