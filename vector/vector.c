@@ -36,7 +36,7 @@ size_t vector_getcapacity(const Vector *vec)
 {
     if (vec == NULL)
         return 0;
-    assert(!vec->flushed && "Tried to acces vector after it was flushed");
+    assert(!vec->flushed && "Tried to access vector after it was flushed");
     return vec->capacity;
 }
 
@@ -44,7 +44,7 @@ size_t vector_getcount(const Vector *vec)
 {
     if (vec == NULL)
         return 0;
-    assert(!vec->flushed && "Tried to acces vector after it was flushed");
+    assert(!vec->flushed && "Tried to access vector after it was flushed");
     return vec->count;
 }
 
@@ -58,7 +58,7 @@ int vector_append(Vector *vec, void *value)
     if (vec == NULL || value == NULL)
         return 0;
 
-    assert(!vec->flushed && "Tried to acces vector after it was flushed");
+    assert(!vec->flushed && "Tried to access vector after it was flushed");
 
     if (++vec->count > vec->capacity)
     {
@@ -77,7 +77,7 @@ int vector_remove(Vector *vec, void **out)
     if (vec == NULL)
         return 0;
 
-    assert(!vec->flushed && "Tried to acces vector after it was flushed");
+    assert(!vec->flushed && "Tried to access vector after it was flushed");
 
     if (out != NULL)
     {
@@ -94,7 +94,7 @@ void *vector_at(const Vector *vec, size_t idx)
     if (vec == NULL)
         return NULL;
 
-    assert(!vec->flushed && "Tried to acces vector after it was flushed");
+    assert(!vec->flushed && "Tried to access vector after it was flushed");
     assert(idx < vec->count && "Index was out of bounds");
     return vec->values[idx];
 }
@@ -104,7 +104,7 @@ int vector_flush(Vector *vec)
     if (vec == NULL)
         return 0;
 
-    assert(!vec->flushed && "Tried to acces vector after it was flushed");
+    assert(!vec->flushed && "Tried to access vector after it was flushed");
 
     vec->flushed = 1;
     // reset all the values
