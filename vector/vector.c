@@ -50,6 +50,8 @@ size_t vector_getcount(const Vector *vec)
 
 int vector_isflushed(const Vector *vec)
 {
+    if (vec == NULL)
+        return 0;
     return vec->flushed;
 }
 
@@ -79,14 +81,15 @@ int vector_remove(Vector *vec, void **out)
 
     assert(!vec->flushed && "Tried to access vector after it was flushed");
 
-    if (out != NULL)
+    if (out != NULL && vec->count > 0)
     {
         *out = vec->values[vec->count - 1];
         vec->values[vec->count - 1] = VECTOR_EMPTY_VALUE;
         vec->count--;
+        return 1;
     }
 
-    return 1;
+    return 0;
 }
 
 void *vector_at(const Vector *vec, size_t idx)

@@ -35,7 +35,9 @@ int main(int argc, char *argv[])
     }
 
     // flush the vector after removing all the values
-    for (int i = 0; i < vector_getcount(numvec); i++)
+    int count = vector_getcount(numvec);
+    printf("vector count before remove: %d\n", count);
+    for (int i = 0; i < count; i++)
     {
         int *outval;
         if (vector_remove(numvec, &outval))
@@ -47,6 +49,7 @@ int main(int argc, char *argv[])
             printf("Failed to remove a value from the vector\n");
         }
     }
+    printf("vector count after remove: %d\n", vector_getcount(numvec));
 
     // flushing the vector resets and frees all the heap allocated stuff
     vector_flush(numvec);
