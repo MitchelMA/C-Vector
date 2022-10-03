@@ -36,7 +36,7 @@ size_t vector_getcapacity(const Vector *vec)
 {
     if (vec == NULL)
         return 0;
-    assert(!vec->flushed);
+    assert(!vec->flushed && "Tried to acces vector after it was flushed");
     return vec->capacity;
 }
 
@@ -44,7 +44,7 @@ size_t vector_getcount(const Vector *vec)
 {
     if (vec == NULL)
         return 0;
-    assert(!vec->flushed);
+    assert(!vec->flushed && "Tried to acces vector after it was flushed");
     return vec->count;
 }
 
@@ -58,15 +58,15 @@ int vector_append(Vector *vec, void *value)
     if (vec == NULL || value == NULL)
         return 0;
 
-    assert(!vec->flushed);
+    assert(!vec->flushed && "Tried to acces vector after it was flushed");
 
     if (++vec->count > vec->capacity)
     {
         increase_capacity(vec);
-        assert(vec->values != NULL);
+        assert(vec->values != NULL && "Failed to allocate more memory for the vector to increase in capacity");
     }
 
-    assert(vec->count < vec->capacity + 1);
+    assert(vec->count < vec->capacity + 1 && "Element count got above capacity");
     vec->values[vec->count - 1] = value;
 
     return 1;
@@ -77,7 +77,7 @@ int vector_remove(Vector *vec, void **out)
     if (vec == NULL)
         return 0;
 
-    assert(!vec->flushed);
+    assert(!vec->flushed && "Tried to acces vector after it was flushed");
 
     if (out != NULL)
     {
@@ -94,8 +94,8 @@ void *vector_at(const Vector *vec, size_t idx)
     if (vec == NULL)
         return NULL;
 
-    assert(!vec->flushed);
-    assert(idx < vec->count);
+    assert(!vec->flushed && "Tried to acces vector after it was flushed");
+    assert(idx < vec->count && "Index was out of bounds");
     return vec->values[idx];
 }
 
@@ -104,7 +104,7 @@ int vector_flush(Vector *vec)
     if (vec == NULL)
         return 0;
 
-    assert(!vec->flushed);
+    assert(!vec->flushed && "Tried to acces vector after it was flushed");
 
     vec->flushed = 1;
     // reset all the values
@@ -119,7 +119,7 @@ int vector_reset(Vector *vec)
     if (vec == NULL)
         return 0;
 
-    assert(vec->flushed);
+    assert(vec->flushed && "Tried to reset vector that was never flushed");
 
     vec->flushed = 0;
     vec->capacity = VECTOR_START_CAPACITY;
