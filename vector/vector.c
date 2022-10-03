@@ -34,12 +34,16 @@ Vector *vector_create()
 
 size_t vector_getcapacity(const Vector *vec)
 {
+    if (vec == NULL)
+        return 0;
     assert(!vec->flushed);
     return vec->capacity;
 }
 
 size_t vector_getcount(const Vector *vec)
 {
+    if (vec == NULL)
+        return 0;
     assert(!vec->flushed);
     return vec->count;
 }
@@ -51,9 +55,10 @@ int vector_isflushed(const Vector *vec)
 
 int vector_append(Vector *vec, void *value)
 {
-    assert(!vec->flushed);
     if (vec == NULL || value == NULL)
         return 0;
+
+    assert(!vec->flushed);
 
     if (++vec->count > vec->capacity)
     {
@@ -69,9 +74,10 @@ int vector_append(Vector *vec, void *value)
 
 int vector_remove(Vector *vec, void **out)
 {
-    assert(!vec->flushed);
     if (vec == NULL)
         return 0;
+
+    assert(!vec->flushed);
 
     if (out != NULL)
     {
@@ -85,6 +91,9 @@ int vector_remove(Vector *vec, void **out)
 
 void *vector_at(const Vector *vec, size_t idx)
 {
+    if (vec == NULL)
+        return NULL;
+
     assert(!vec->flushed);
     assert(idx < vec->count);
     return vec->values[idx];

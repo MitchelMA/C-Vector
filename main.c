@@ -72,6 +72,6 @@ void vector_print(Vector *vec)
     for (int i = 0; i < vector_getcount(vec); i++)
     {
         int *val = vector_at(vec, i);
-        printf("element %d: %p : %d\n", i, val, *val);
+        printf("element %2d: %p : %d\n", i, val, *val);
     }
 }
