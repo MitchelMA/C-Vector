@@ -74,6 +74,31 @@ int vector_append(Vector *vec, void *value)
     return 1;
 }
 
+int vector_insertafter(Vector *vec, size_t idx, void *value)
+{
+    if (vec == NULL || idx >= vec->count || value == NULL)
+        return 0;
+
+    assert(!vec->flushed && "Tried to access vector after it was flushed");
+
+    // append the last value again into the list
+    void *last = vector_at(vec, vec->count - 1);
+    if (!vector_append(vec, last))
+    {
+        return 0;
+    }
+
+    // shove everything above the specified idx up one
+    for (size_t i = vec->count - 1; i > idx; i--)
+    {
+        vec->values[i] = vec->values[i - 1];
+    }
+
+    // set the new value at idx
+    vec->values[idx + 1] = value;
+    return 1;
+}
+
 int vector_remove(Vector *vec, void **out)
 {
     if (vec == NULL)

@@ -26,6 +26,16 @@ int vector_isflushed(const Vector *vec);
 int vector_append(Vector *vec, void *value);
 
 /**
+ * @brief Inserts value **after** the specified index `idx`.
+ *
+ * @param vec
+ * @param idx
+ * @param value
+ * @return integer determining if inserting went succesful.
+ */
+int vector_insertafter(Vector *vec, size_t idx, void *value);
+
+/**
  * @brief Removes the last element of the vector
  *
  * @param vec The vector from which the last element gets removed

@@ -34,6 +34,18 @@ int main(int argc, char *argv[])
         vector_print(numvec);
     }
 
+    int *insertedval = malloc(sizeof(int));
+    *insertedval = 99;
+    int oldcount = vector_getcount(numvec);
+    int insertidx = 9;
+    if (vector_insertafter(numvec, insertidx, insertedval))
+    {
+        printf("count before insert: %d\n", oldcount);
+        printf("successfully inserted value of %d into the vector at %d\n", *insertedval, insertidx + 1);
+        printf("count after insert: %d\n", vector_getcount(numvec));
+        vector_print(numvec);
+    }
+
     // flush the vector after removing all the values
     int count = vector_getcount(numvec);
     printf("vector count before remove: %d\n", count);
@@ -50,6 +62,7 @@ int main(int argc, char *argv[])
         }
     }
     printf("vector count after remove: %d\n", vector_getcount(numvec));
+    printf("vector capacity at the end: %d\n", vector_getcapacity(numvec));
 
     // flushing the vector resets and frees all the heap allocated stuff
     vector_flush(numvec);
