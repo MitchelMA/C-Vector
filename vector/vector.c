@@ -18,7 +18,8 @@ typedef struct _vector_impl
 
 // local prototypes ------
 
-void increase_capacity(Vector *vec);
+void _increase_capacity(Vector *vec);
+void _decrease_capacity(Vector *vec);
 
 // end local prototypes --
 
@@ -64,11 +65,10 @@ int vector_append(Vector *vec, void *value)
 
     if (++vec->count > vec->capacity)
     {
-        increase_capacity(vec);
+        _increase_capacity(vec);
         assert(vec->values != NULL && "Failed to allocate more memory for the vector to increase in capacity");
     }
 
-    assert(vec->count < vec->capacity + 1 && "Element count got above capacity");
     vec->values[vec->count - 1] = value;
 
     return 1;
@@ -82,7 +82,7 @@ int vector_insertafter(Vector *vec, size_t idx, void *value)
     assert(!vec->flushed && "Tried to access vector after it was flushed");
 
     // append the last value again into the list
-    void *last = vector_at(vec, vec->count - 1);
+    void *last = vec->values[vec->count - 1];
     if (!vector_append(vec, last))
     {
         return 0;
@@ -106,11 +106,21 @@ int vector_remove(Vector *vec, void **out)
 
     assert(!vec->flushed && "Tried to access vector after it was flushed");
 
-    if (out != NULL && vec->count > 0)
+    if (vec->count > 0)
     {
-        *out = vec->values[vec->count - 1];
+        if (out != NULL)
+            *out = vec->values[vec->count - 1];
+
         vec->values[vec->count - 1] = VECTOR_EMPTY_VALUE;
         vec->count--;
+
+        size_t diff = vec->capacity - vec->count;
+        if (diff >= VECTOR_CAPACITY_INCREASE && vec->count > 0)
+        {
+            _decrease_capacity(vec);
+            assert(vec->values != NULL && "Failed to decrease capacity of vector");
+        }
+
         return 1;
     }
 
@@ -156,11 +166,25 @@ int vector_reset(Vector *vec)
     return 1;
 }
 
+void print_adresses(Vector *vec)
+{
+    for (size_t i = 0; i < vec->count; i++)
+    {
+        printf("%llu: %p\n", i, (vec->values + i));
+    }
+}
+
 // local prototype implementations ------
 
-void increase_capacity(Vector *vec)
+void _increase_capacity(Vector *vec)
 {
     vec->capacity += VECTOR_CAPACITY_INCREASE;
+    vec->values = realloc(vec->values, vec->capacity * sizeof(uintptr_t));
+}
+
+void _decrease_capacity(Vector *vec)
+{
+    vec->capacity -= VECTOR_CAPACITY_INCREASE;
     vec->values = realloc(vec->values, vec->capacity * sizeof(uintptr_t));
 }
 

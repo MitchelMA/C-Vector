@@ -71,4 +71,6 @@ int vector_flush(Vector *vec);
  */
 int vector_reset(Vector *vec);
 
+void print_adresses(Vector *vec);
+
 #endif // __VECTOR_H__

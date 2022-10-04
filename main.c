@@ -20,8 +20,8 @@ int main(int argc, char *argv[])
     *(int *)vector_at(numvec, 2) = 20;
 
     // show data
-    printf("count: %d\n", vector_getcount(numvec));
-    printf("capacity: %d\n", vector_getcapacity(numvec));
+    printf("count: %llu\n", vector_getcount(numvec));
+    printf("capacity: %llu\n", vector_getcapacity(numvec));
     printf("items:\n");
     vector_print(numvec);
 
@@ -36,22 +36,22 @@ int main(int argc, char *argv[])
 
     int *insertedval = malloc(sizeof(int));
     *insertedval = 99;
-    int oldcount = vector_getcount(numvec);
+    size_t oldcount = vector_getcount(numvec);
     int insertidx = 9;
     if (vector_insertafter(numvec, insertidx, insertedval))
     {
-        printf("count before insert: %d\n", oldcount);
+        printf("count before insert: %llu\n", oldcount);
         printf("successfully inserted value of %d into the vector at %d\n", *insertedval, insertidx + 1);
         printf("count after insert: %d\n", vector_getcount(numvec));
         vector_print(numvec);
     }
 
     // flush the vector after removing all the values
-    int count = vector_getcount(numvec);
-    printf("vector count before remove: %d\n", count);
-    for (int i = 0; i < count; i++)
+    size_t count = vector_getcount(numvec);
+    printf("vector count before remove: %llu\n", count);
+    for (size_t i = 0; i < count; i++)
     {
-        int *outval;
+        void *outval;
         if (vector_remove(numvec, &outval))
         {
             free(outval);
@@ -61,8 +61,8 @@ int main(int argc, char *argv[])
             printf("Failed to remove a value from the vector\n");
         }
     }
-    printf("vector count after remove: %d\n", vector_getcount(numvec));
-    printf("vector capacity at the end: %d\n", vector_getcapacity(numvec));
+    printf("vector count after remove: %llu\n", vector_getcount(numvec));
+    printf("vector capacity at the end: %llu\n", vector_getcapacity(numvec));
 
     // flushing the vector resets and frees all the heap allocated stuff
     vector_flush(numvec);
@@ -86,9 +86,9 @@ void fillVec(Vector *vec, int amount)
 
 void vector_print(Vector *vec)
 {
-    for (int i = 0; i < vector_getcount(vec); i++)
+    for (size_t i = 0; i < vector_getcount(vec); i++)
     {
         int *val = vector_at(vec, i);
-        printf("element %2d: %p : %d\n", i, val, *val);
+        printf("element %2llu: %p : %d\n", i, val, *val);
     }
 }
