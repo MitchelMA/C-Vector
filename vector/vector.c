@@ -10,10 +10,10 @@
 
 typedef struct _vector_impl
 {
-    void **values;
     size_t capacity;
     size_t count;
     int flushed;
+    void **values;
 } Vector;
 
 // local prototypes ------
@@ -26,10 +26,18 @@ void _decrease_capacity(Vector *vec);
 Vector *vector_create()
 {
     Vector *tmp = malloc(sizeof(Vector));
-    tmp->values = malloc(VECTOR_START_CAPACITY * sizeof(uintptr_t));
+    if (tmp == NULL)
+        return NULL;
     tmp->capacity = VECTOR_START_CAPACITY;
     tmp->count = 0;
     tmp->flushed = 0;
+
+    tmp->values = malloc(tmp->capacity * sizeof(uintptr_t));
+    if (tmp->values == NULL)
+    {
+        free(tmp);
+        return NULL;
+    }
     return tmp;
 }
 
