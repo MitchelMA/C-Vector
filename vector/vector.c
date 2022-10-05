@@ -82,6 +82,29 @@ int vector_append(Vector *vec, void *value)
     return 1;
 }
 
+int vector_insertbefore(Vector *vec, size_t idx, void *value)
+{
+    if (vec == NULL || idx < 1 || idx > vec->count + 1 || value == NULL)
+        return 0;
+
+    assert(!vec->flushed && "Tried to access vector after it was flushed");
+
+    void *last = vec->values[vec->count - 1];
+    if (!vector_append(vec, last))
+    {
+        return 0;
+    }
+
+    for (size_t i = vec->count - 1; i > idx - 1; i--)
+    {
+        vec->values[i] = vec->values[i - 1];
+    }
+
+    vec->values[idx - 1] = value;
+
+    return 1;
+}
+
 int vector_insertafter(Vector *vec, size_t idx, void *value)
 {
     if (vec == NULL || idx >= vec->count || value == NULL)

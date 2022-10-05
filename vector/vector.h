@@ -25,6 +25,8 @@ int vector_isflushed(const Vector *vec);
  */
 int vector_append(Vector *vec, void *value);
 
+int vector_insertbefore(Vector *vec, size_t idx, void *value);
+
 /**
  * @brief Inserts value **after** the specified index `idx`.
  *
