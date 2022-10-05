@@ -20,6 +20,7 @@ typedef struct _vector_impl
 
 void _increase_capacity(Vector *vec);
 void _decrease_capacity(Vector *vec);
+void _clear_empty(Vector *vec);
 
 // end local prototypes --
 
@@ -158,6 +159,29 @@ int vector_remove(Vector *vec, void **out)
     return 0;
 }
 
+int vector_removeat(Vector *vec, size_t idx, void **out)
+{
+    if (vec == NULL || idx >= vec->count)
+        return 0;
+
+    assert(!vec->flushed && "Tried to access vector after it was flushed");
+
+    // get the selected element
+    void *selected = vec->values[idx];
+    if (selected == NULL)
+        return 0;
+
+    if (out != NULL)
+        *out = selected;
+
+    // set the selected index to empty
+    vec->values[idx] = VECTOR_EMPTY_VALUE;
+    // clear the empty slot
+    _clear_empty(vec);
+
+    return 1;
+}
+
 void *vector_at(const Vector *vec, size_t idx)
 {
     if (vec == NULL)
@@ -197,7 +221,7 @@ int vector_reset(Vector *vec)
     return 1;
 }
 
-void print_adresses(Vector *vec)
+void vector_print_adresses(Vector *vec)
 {
     for (size_t i = 0; i < vec->count; i++)
     {
@@ -217,6 +241,22 @@ void _decrease_capacity(Vector *vec)
 {
     vec->capacity -= VECTOR_CAPACITY_INCREASE;
     vec->values = realloc(vec->values, vec->capacity * sizeof(uintptr_t));
+}
+
+void _clear_empty(Vector *vec)
+{
+    for (size_t idx = 0; idx < vec->count; idx++)
+    {
+        void *elem = vec->values[idx];
+        if (elem == NULL || elem != VECTOR_EMPTY_VALUE)
+            continue;
+
+        for (size_t inner = idx; inner < vec->count; inner++)
+        {
+            vec->values[inner] = vec->values[inner + 1];
+        }
+        vec->count--;
+    }
 }
 
 // end local prototype implementations --

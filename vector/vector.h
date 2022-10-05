@@ -25,6 +25,14 @@ int vector_isflushed(const Vector *vec);
  */
 int vector_append(Vector *vec, void *value);
 
+/**
+ * @brief Inserts value **before** the specified index `idx`.
+ *
+ * @param vec
+ * @param idx
+ * @param value
+ * @return int
+ */
 int vector_insertbefore(Vector *vec, size_t idx, void *value);
 
 /**
@@ -45,6 +53,16 @@ int vector_insertafter(Vector *vec, size_t idx, void *value);
  * @return Succes
  */
 int vector_remove(Vector *vec, void **out);
+
+/**
+ * @brief Removes the element at the specified index.
+ *
+ * @param vec
+ * @param idx
+ * @param out
+ * @return int
+ */
+int vector_removeat(Vector *vec, size_t idx, void **out);
 
 /**
  * @brief Gets the element at the specified index
@@ -73,6 +91,6 @@ int vector_flush(Vector *vec);
  */
 int vector_reset(Vector *vec);
 
-void print_adresses(Vector *vec);
+void vector_print_adresses(Vector *vec);
 
 #endif // __VECTOR_H__

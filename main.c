@@ -34,6 +34,13 @@ int main(int argc, char *argv[])
         vector_print(numvec);
     }
 
+    if (vector_removeat(numvec, 2, &out))
+    {
+        printf("\nremoved value: %d at index 2\n", *out);
+        free(out);
+        vector_print(numvec);
+    }
+
     int *insertedval = malloc(sizeof(int));
     *insertedval = 99;
     size_t oldcount = vector_getcount(numvec);
