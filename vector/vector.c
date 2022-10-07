@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <string.h>
 #include "vector.h"
 
 #define VECTOR_START_CAPACITY 16
