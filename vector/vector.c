@@ -178,6 +178,14 @@ int vector_removeat(Vector *vec, size_t idx, void **out)
     // clear the empty slot
     _clear_empty(vec);
 
+    // decrease in capacity when necessary
+    size_t diff = vec->capacity - vec->count;
+    if (diff >= VECTOR_CAPACITY_INCREASE && vec->count > 0)
+    {
+        _decrease_capacity(vec);
+        assert(vec->values != NULL && "Failed to decrease capacity of vector");
+    }
+
     return 1;
 }
 
