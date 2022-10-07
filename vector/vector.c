@@ -132,30 +132,29 @@ int vector_insertafter(Vector *vec, size_t idx, void *value)
 
 int vector_remove(Vector *vec, void **out)
 {
-    if (vec == NULL)
+    if (vec == NULL || vec->count <= 0)
         return 0;
 
     assert(!vec->flushed && "Tried to access vector after it was flushed");
 
-    if (vec->count > 0)
+    void *last = vec->values[vec->count - 1];
+    if (last == NULL)
+        return 0;
+
+    if (out != NULL)
+        *out = last;
+
+    vec->values[vec->count - 1] = VECTOR_EMPTY_VALUE;
+    vec->count--;
+
+    size_t diff = vec->capacity - vec->count;
+    if (diff >= VECTOR_CAPACITY_INCREASE && vec->count > 0)
     {
-        if (out != NULL)
-            *out = vec->values[vec->count - 1];
-
-        vec->values[vec->count - 1] = VECTOR_EMPTY_VALUE;
-        vec->count--;
-
-        size_t diff = vec->capacity - vec->count;
-        if (diff >= VECTOR_CAPACITY_INCREASE && vec->count > 0)
-        {
-            _decrease_capacity(vec);
-            assert(vec->values != NULL && "Failed to decrease capacity of vector");
-        }
-
-        return 1;
+        _decrease_capacity(vec);
+        assert(vec->values != NULL && "Failed to decrease capacity of vector");
     }
 
-    return 0;
+    return 1;
 }
 
 int vector_removeat(Vector *vec, size_t idx, void **out)
